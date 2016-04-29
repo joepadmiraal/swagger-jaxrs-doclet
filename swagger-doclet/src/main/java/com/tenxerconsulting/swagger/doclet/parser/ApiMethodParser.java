@@ -401,7 +401,7 @@ public class ApiMethodParser {
 
 							// Check whether the class name is split into two rows
 							String rows[] = tagValue.split("\r?\n|\r");
-							if (rows.length > 1) {
+							if (responseModelClass != null && rows.length > 1) {
 								String secondRow = rows[1].trim();
 								if (responseModelClass.endsWith(".") || secondRow.startsWith("."))
 									responseModelClass += secondRow;
