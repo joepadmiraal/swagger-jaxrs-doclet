@@ -50,6 +50,7 @@ public class ApiMethodParser {
 
 	private Method parentMethod;
 	private String parentPath;
+	private String parentAuthorization;
 
 	private final DocletOptions options;
 	private final Translator translator;
@@ -68,7 +69,7 @@ public class ApiMethodParser {
 	 * @param classes
 	 * @param classDefaultErrorType
 	 */
-	public ApiMethodParser(DocletOptions options, String parentPath, MethodDoc methodDoc, Collection<ClassDoc> classes, String classDefaultErrorType) {
+	public ApiMethodParser(DocletOptions options, String parentPath, String parentAuthorization, MethodDoc methodDoc, Collection<ClassDoc> classes, String classDefaultErrorType) {
 		this.options = options;
 		this.translator = options.getTranslator();
 		this.parentPath = parentPath;
@@ -79,6 +80,7 @@ public class ApiMethodParser {
 		this.classDefaultErrorType = classDefaultErrorType;
 		this.methodDefaultErrorType = ParserHelper.getInheritableTagValue(methodDoc, options.getDefaultErrorTypeTags(), options);
 		this.classes = classes;
+		this.parentAuthorization = parentAuthorization;
 	}
 
 	/**
@@ -89,11 +91,12 @@ public class ApiMethodParser {
 	 * @param classes
 	 * @param classDefaultErrorType
 	 */
-	public ApiMethodParser(DocletOptions options, Method parentMethod, MethodDoc methodDoc, Collection<ClassDoc> classes, String classDefaultErrorType) {
-		this(options, parentMethod.getPath(), methodDoc, classes, classDefaultErrorType);
+	public ApiMethodParser(DocletOptions options, Method parentMethod, String parentAuthorization, MethodDoc methodDoc, Collection<ClassDoc> classes, String classDefaultErrorType) {
+		this(options, parentMethod.getPath(), parentAuthorization, methodDoc, classes, classDefaultErrorType);
 
 		this.parentPath = parentMethod.getPath();
 		this.parentMethod = parentMethod;
+		this.parentAuthorization = parentAuthorization;
 
 	}
 
@@ -145,7 +148,13 @@ public class ApiMethodParser {
 		List<ApiParameter> parameters = this.generateParameters();
 
 		ClassDoc[] viewClasses = ParserHelper.getInheritableJsonViews(this.methodDoc, this.options);
+		
 
+		String authorization = ParserHelper.resolveMethodAuthorization(this.methodDoc, this.options);
+		if (authorization == null) {
+			authorization = parentAuthorization;
+		}
+		
 		// build response messages
 		List<ApiResponseMessage> responseMessages = generateResponseMessages(viewClasses);
 
@@ -285,6 +294,9 @@ public class ApiMethodParser {
 		if (customNotes != null) {
 			notes = customNotes;
 		}
+		if (authorization != null) {
+			notes += "\n\nRequired authorization: " + authorization;
+		}
 		String customSummary = ParserHelper.getInheritableTagValue(this.methodDoc, this.options.getOperationSummaryTags(), this.options);
 		if (customSummary != null) {
 			summary = customSummary;
@@ -300,7 +312,7 @@ public class ApiMethodParser {
 		// ************************************
 		List<String> consumes = ParserHelper.getConsumes(this.methodDoc, this.options);
 		List<String> produces = ParserHelper.getProduces(this.methodDoc, this.options);
-
+		
 		if (this.options.isLogDebug()) {
 			System.out.println("finished parsing method: " + this.methodDoc.name());
 		}

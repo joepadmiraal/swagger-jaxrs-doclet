@@ -1,0 +1,27 @@
+{
+    "apiVersion": "0",
+    "swaggerVersion": "1.2",
+    "basePath": "http://localhost:8080",
+    "resourcePath": "/authorization",
+    "apis": [
+        {
+            "path": "/authorization",
+            "operations": [
+                {
+                    "summary" : "Summary.",
+                    "notes" : "Notes.\n\nRequired authorization level: SUPERVISOR",
+                    "method": "GET",
+                    "nickname": "supervisorMethod",
+                    "type": "void"
+                },
+                {
+                    "summary" : "Summary.",
+                    "notes" : "First paragraph.\nSecondParagraph.\n\nRequired authorization level: EDITOR",
+                    "method": "GET",
+                    "nickname": "notesWithIntendedLineBreak",
+                    "type": "void"
+                }
+            ]
+        }
+    ]
+}

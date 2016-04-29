@@ -3,20 +3,12 @@ package com.tenxerconsulting.swagger.doclet.parser;
 import static com.google.common.base.Objects.equal;
 import static com.google.common.collect.Maps.uniqueIndex;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.base.Function;
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.Tag;
-import com.sun.javadoc.Type;
-import com.tenxerconsulting.swagger.doclet.DocletOptions;
+import com.sun.javadoc.*;
+import com.sun.javadoc.AnnotationDesc.*;
+import com.tenxerconsulting.swagger.doclet.*;
 import com.tenxerconsulting.swagger.doclet.model.Api;
 import com.tenxerconsulting.swagger.doclet.model.ApiDeclaration;
 import com.tenxerconsulting.swagger.doclet.model.Method;
@@ -172,8 +164,10 @@ public class CrossClassApiParser {
 						System.out.println("processing method: " + method.name());
 					}
 
-					ApiMethodParser methodParser = this.parentMethod == null ? new ApiMethodParser(this.options, this.rootPath, method, allClasses,
-							defaultErrorTypeClass) : new ApiMethodParser(this.options, this.parentMethod, method, allClasses, defaultErrorTypeClass);
+					String authorization = ParserHelper.resolveClassAuthorization(currentClassDoc, this.options);					
+
+					ApiMethodParser methodParser = this.parentMethod == null ? new ApiMethodParser(this.options, this.rootPath, authorization, method, allClasses,
+							defaultErrorTypeClass) : new ApiMethodParser(this.options, this.parentMethod, authorization, method, allClasses, defaultErrorTypeClass);
 
 					Method parsedMethod = methodParser.parse();
 					if (parsedMethod == null) {

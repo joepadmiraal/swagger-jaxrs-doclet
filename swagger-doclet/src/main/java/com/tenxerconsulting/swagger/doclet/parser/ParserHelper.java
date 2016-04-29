@@ -60,6 +60,9 @@ public class ParserHelper {
 	}
 
 	private static final String JAX_RS_PATH = "javax.ws.rs.Path";
+	
+	private static final String RESTRICTED = "com.exmachina.util.web.servlet.filters.authentication.annotations.Restricted";
+	
 
 	private static final String JAX_RS_CONSUMES = "javax.ws.rs.Consumes";
 	private static final String JAX_RS_PRODUCES = "javax.ws.rs.Produces";
@@ -175,6 +178,16 @@ public class ParserHelper {
 	}
 
 	/**
+	 * Resolves the ExMachina authorization (Restricted annotation) for the ClassDoc supporting instance
+	 * @param classDoc The class to be processed
+	 * @param options Doclet options
+	 * @return The resolved value or null when not found
+	 */
+	public static String resolveClassAuthorization(ClassDoc classDoc, DocletOptions options) {
+		return ParserHelper.getInheritableClassLevelAnnotationValue(classDoc, options, RESTRICTED, "value");
+	}
+	
+	/**
 	 * Resolves the @Path for the MethodDoc respecting the overriden methods
 	 * @param methodDoc The method to be processed
 	 * @param options Doclet options
@@ -189,6 +202,23 @@ public class ParserHelper {
 			methodDoc = getAncestorMethod(methodDoc);
 		}
 		return normalisePath(path);
+	}
+	
+	/**
+	 * R Resolves the ExMachina authorization (Restricted annotation) for the MethodDoc respecting the overriden methods
+	 * @param methodDoc The method to be processed
+	 * @param options Doclet options
+	 * @return The resolved path or null when not found
+	 */
+	public static String resolveMethodAuthorization(ExecutableMemberDoc methodDoc, DocletOptions options) {
+
+		String authorization = null;
+		while (authorization == null && methodDoc != null) {
+			AnnotationParser p = new AnnotationParser(methodDoc, options);
+			authorization = p.getAnnotationValue(RESTRICTED, "value");
+			methodDoc = getAncestorMethod(methodDoc);
+		}
+		return authorization;
 	}
 
 	/**
@@ -1750,7 +1780,7 @@ public class ParserHelper {
 			if (value != null) {
 				return value;
 			}
-
+			
 			currentClassDoc = currentClassDoc.superclass();
 			// ignore parent object class
 			if (!ParserHelper.hasAncestor(currentClassDoc)) {
