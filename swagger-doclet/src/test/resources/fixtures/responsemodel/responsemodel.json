@@ -74,6 +74,44 @@
                 },
                 {
                     "method": "GET",
+                    "nickname": "responseWithModelSplitOverTwoRowsEndingWithDot",
+                    "type": "Response",
+                    "responseMessages": [
+                        {
+                            "code": 200,
+                            "message": "if ok",
+                            "responseModel" : "Response1"
+                        },
+                        {
+                            "code": 404,
+                            "message": "if no result found",
+                            "responseModel" : "Response2"
+                        },
+                        {
+                            "code": 500,
+                            "message": "if an internal error occurred"
+                        }
+                    ]
+                },
+                {
+                    "method": "GET",
+                    "nickname": "responseWithModelSplitOverTwoRowsStartingWithDot",
+                    "type": "Response",
+                    "responseMessages": [
+                        {
+                            "code": 200,
+                            "message": "if ok",
+                            "responseModel" : "Response1"
+                        },
+                        {
+                            "code": 404,
+                            "message": "if no result found",
+                            "responseModel" : "Response2"
+                        }
+                    ]
+                },
+                {
+                    "method": "GET",
                     "nickname": "responseDefinedViaResponseCode",
                     "type": "Response",
                     "responseMessages": [

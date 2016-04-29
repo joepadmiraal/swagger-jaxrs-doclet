@@ -398,6 +398,14 @@ public class ApiMethodParser {
 						String responseModelClass = null;
 						if (matcher.groupCount() > 2) {
 							responseModelClass = ParserHelper.trimLeadingChars(matcher.group(3), '`');
+
+							// Check whether the class name is split into two rows
+							String rows[] = tagValue.split("\r?\n|\r");
+							if (rows.length > 1) {
+								String secondRow = rows[1].trim();
+								if (responseModelClass.endsWith(".") || secondRow.startsWith("."))
+									responseModelClass += secondRow;
+							}
 						}
 						// for errors, if no custom one use the method level one if there is one
 						if (statusCode >= 400) {

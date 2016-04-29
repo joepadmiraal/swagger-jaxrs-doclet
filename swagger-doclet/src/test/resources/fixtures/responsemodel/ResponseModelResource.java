@@ -106,7 +106,31 @@ public class ResponseModelResource {
 	public Response responseBigDecObject() {
 		return Response.ok().build();
 	}
+	
+	/**
+	 * @responseMessage 200 if ok `fixtures.responsemodel.Response1
+	 * @responseMessage 404 if no result found `fixtures.
+	 * 		responsemodel.Response2
+	 * @responseMessage 500 if an internal error occurred
+	 */
+	@SuppressWarnings("javadoc")
+	@GET
+	public Response responseWithModelSplitOverTwoRowsEndingWithDot() {
+		return Response.ok().entity(new Response2()).build();
+	}
 
+	/**
+	 * @responseMessage 200 if ok `fixtures.responsemodel.Response1
+	 * @responseMessage 404 if no result found `fixtures
+	 * 		.responsemodel.Response2
+	 */
+	@SuppressWarnings("javadoc")
+	@GET
+	public Response responseWithModelSplitOverTwoRowsStartingWithDot() {
+		return Response.ok().entity(new Response2()).build();
+	}
+
+	
 	/**
 	 * @responseMessage 200 if ok `fixtures.responsemodel.Response1
 	 * @responseMessage 404 if no result found `fixtures.responsemodel.Response2
