@@ -271,7 +271,14 @@ public class ApiMethodParser {
 		if (notes == null) {
 			notes = "";
 		}
-		notes = notes.replace(summary, "").trim();
+		// Strip the summary
+		notes = notes.replace(summary, "");
+		// Convert double line breaks to <br>
+		notes = notes.replaceAll("\\r\\n\\r\\n|\\r\\r|\\n\\n", "<br>");
+		// Strip remaining line breaks
+		notes = notes.replaceAll("\\r\\n\\r\\n|\\r|\\n", "");
+		// Convert <br> to line breaks
+		notes = notes.replaceAll("<br> |<br>", "\n").trim();
 
 		// look for custom notes/summary tags to use instead
 		String customNotes = ParserHelper.getInheritableTagValue(this.methodDoc, this.options.getOperationNotesTags(), this.options);
