@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 
 import javax.ws.rs.core.MediaType;
 
+import com.google.common.base.*;
 import com.sun.javadoc.AnnotationDesc;
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.MethodDoc;
@@ -236,6 +237,26 @@ public class ApiMethodParser {
 			addParameterizedModelTypes(returnType, varsToTypes, viewClasses);
 		}
 
+		// generate success response messages when they're not explicitly specified in the Javadoc 
+		boolean successResponseMessageAvailable = false;
+		for (ApiResponseMessage responseMessage : responseMessages) {
+			if (responseMessage.getCode() >= 200 && responseMessage.getCode() < 300)
+				successResponseMessageAvailable = true;
+		}
+		
+		if (!successResponseMessageAvailable) {
+
+			if (returnType.typeName().equals("void")) {
+				responseMessages.add(new ApiResponseMessage(204, "No Content"));
+			} else {
+				if (Strings.isNullOrEmpty(returnTypeItemsRef))
+					// Don't add return response model for arrays
+					responseMessages.add(new ApiResponseMessage(200, "OK", returnTypeName));
+				else
+					responseMessages.add(new ApiResponseMessage(200, "OK"));
+			}
+		}
+		
 		// read extra details for the return type
 		FieldReader returnTypeReader = new FieldReader(this.options);
 
